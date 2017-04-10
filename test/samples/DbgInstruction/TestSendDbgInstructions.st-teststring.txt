@@ -1,0 +1,16 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'TestSendDbgInstructions.st','asString'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  dbg 'TestSendDbgInstructions.st', 1:2
+    0007:  push_int       3
+    0012:  send           0, 'asString'
+    0017:  dbg 'TestSendDbgInstructions.st', 1:10
+    0024:  pop              
+    0025:  self             
+    0026:  return           

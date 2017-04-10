@@ -1,0 +1,19 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'ReturnWithDbgInstruction.st','x','=='
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  dbg 'ReturnWithDbgInstruction.st', 1:2
+    0007:  push_global    'x'
+    0010:  nil              
+    0011:  send           1, '=='
+    0016:  dbg 'ReturnWithDbgInstruction.st', 1:0
+    0023:  return           
+    0024:  dbg 'ReturnWithDbgInstruction.st', 1:7
+    0031:  pop              
+    0032:  self             
+    0033:  return           

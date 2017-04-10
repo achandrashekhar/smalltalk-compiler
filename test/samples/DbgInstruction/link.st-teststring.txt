@@ -1,0 +1,82 @@
+name: Link
+superClass: 
+fields: _value,link
+literals: 'link.st','new','value:','asString'
+methods:
+    name: static withValue:
+    qualifiedName: Link>>withValue:
+    nargs: 1
+    nlocals: 0
+    0000:  self             
+    0001:  send_super     0, 'new'
+    0006:  push_local     0, 0
+    0011:  dbg 'link.st', 6:18
+    0018:  send           1, 'value:'
+    0023:  dbg 'link.st', 6:7
+    0030:  return           
+    0031:  dbg 'link.st', 7:3
+    0038:  pop              
+    0039:  self             
+    0040:  return           
+
+    name: nextLink
+    qualifiedName: Link>>nextLink
+    nargs: 0
+    nlocals: 0
+    0000:  push_field     1
+    0003:  dbg 'link.st', 9:14
+    0010:  return           
+    0011:  dbg 'link.st', 9:20
+    0018:  pop              
+    0019:  self             
+    0020:  return           
+
+    name: nextLink:
+    qualifiedName: Link>>nextLink:
+    nargs: 1
+    nlocals: 0
+    0000:  dbg 'link.st', 10:21
+    0007:  push_local     0, 0
+    0012:  store_field    1
+    0015:  dbg 'link.st', 10:35
+    0022:  pop              
+    0023:  self             
+    0024:  return           
+
+    name: value:
+    qualifiedName: Link>>value:
+    nargs: 1
+    nlocals: 0
+    0000:  dbg 'link.st', 11:14
+    0007:  push_local     0, 0
+    0012:  store_field    0
+    0015:  dbg 'link.st', 11:27
+    0022:  pop              
+    0023:  self             
+    0024:  return           
+
+    name: value
+    qualifiedName: Link>>value
+    nargs: 0
+    nlocals: 0
+    0000:  push_field     0
+    0003:  dbg 'link.st', 12:10
+    0010:  return           
+    0011:  dbg 'link.st', 12:17
+    0018:  pop              
+    0019:  self             
+    0020:  return           
+
+    name: asString
+    qualifiedName: Link>>asString
+    nargs: 0
+    nlocals: 0
+    0000:  dbg 'link.st', 13:21
+    0007:  push_field     0
+    0010:  send           0, 'asString'
+    0015:  dbg 'link.st', 13:13
+    0022:  return           
+    0023:  dbg 'link.st', 13:29
+    0030:  pop              
+    0031:  self             
+    0032:  return           

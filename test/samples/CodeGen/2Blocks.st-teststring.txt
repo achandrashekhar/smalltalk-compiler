@@ -1,0 +1,29 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'whileTrue:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  block          0
+    0003:  block          1
+    0006:  send           1, 'whileTrue:'
+    0011:  pop              
+    0012:  self             
+    0013:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 0
+        nlocals: 0
+        0000:  true             
+        0001:  block_return     
+
+        name: main-block1
+        qualifiedName: main>>main-block1
+        nargs: 0
+        nlocals: 0
+        0000:  nil              
+        0001:  block_return     

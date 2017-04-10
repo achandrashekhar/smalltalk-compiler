@@ -1,0 +1,29 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'TestSendDbgWithMultiArgs.st','+','to:do:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  push_int       1
+    0005:  push_int       10
+    0010:  block          0
+    0013:  dbg 'TestSendDbgWithMultiArgs.st', 1:2
+    0020:  send           2, 'to:do:'
+    0025:  dbg 'TestSendDbgWithMultiArgs.st', 1:18
+    0032:  pop              
+    0033:  self             
+    0034:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 0
+        nlocals: 0
+        0000:  dbg 'TestSendDbgWithMultiArgs.st', 1:15
+        0007:  push_int       5
+        0012:  push_int       6
+        0017:  send           1, '+'
+        0022:  dbg 'TestSendDbgWithMultiArgs.st', 1:17
+        0029:  block_return     

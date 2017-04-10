@@ -1,0 +1,18 @@
+name: T
+superClass: 
+fields: 
+literals: '+','*'
+methods:
+    name: foo
+    qualifiedName: T>>foo
+    nargs: 0
+    nlocals: 1
+    0000:  push_int       1
+    0005:  push_int       5
+    0010:  send           1, '+'
+    0015:  push_int       10
+    0020:  send           1, '*'
+    0025:  store_local    0, 0
+    0030:  pop              
+    0031:  self             
+    0032:  return           

@@ -1,0 +1,21 @@
+name: T
+superClass: 
+fields: x
+literals: 
+methods:
+name: U
+superClass: T
+fields: y
+literals: '+'
+methods:
+    name: value
+    qualifiedName: U>>value
+    nargs: 0
+    nlocals: 0
+    0000:  push_field     0
+    0003:  push_field     1
+    0006:  send           1, '+'
+    0011:  return           
+    0012:  pop              
+    0013:  self             
+    0014:  return           

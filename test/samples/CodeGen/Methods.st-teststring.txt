@@ -1,0 +1,24 @@
+name: T
+superClass: 
+fields: 
+literals: 
+methods:
+    name: foo
+    qualifiedName: T>>foo
+    nargs: 0
+    nlocals: 0
+    0000:  push_int       99
+    0005:  return           
+    0006:  pop              
+    0007:  self             
+    0008:  return           
+
+    name: bar
+    qualifiedName: T>>bar
+    nargs: 0
+    nlocals: 0
+    0000:  push_int       100
+    0005:  return           
+    0006:  pop              
+    0007:  self             
+    0008:  return           

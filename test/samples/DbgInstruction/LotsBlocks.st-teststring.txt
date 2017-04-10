@@ -1,0 +1,51 @@
+name: T
+superClass: 
+fields: 
+literals: 'LotsBlocks.st','head','~~','value','value:','nextLink','whileTrue:'
+methods:
+    name: do:
+    qualifiedName: T>>do:
+    nargs: 1
+    nlocals: 1
+    0000:  dbg 'LotsBlocks.st', 4:2
+    0007:  push_global    'head'
+    0010:  store_local    0, 1
+    0015:  pop              
+    0016:  block          0
+    0019:  block          1
+    0022:  dbg 'LotsBlocks.st', 5:11
+    0029:  send           1, 'whileTrue:'
+    0034:  dbg 'LotsBlocks.st', 6:1
+    0041:  pop              
+    0042:  self             
+    0043:  return           
+    blocks:
+        name: do:-block0
+        qualifiedName: do:>>do:-block0
+        nargs: 0
+        nlocals: 0
+        0000:  dbg 'LotsBlocks.st', 5:4
+        0007:  push_local     1, 1
+        0012:  nil              
+        0013:  send           1, '~~'
+        0018:  dbg 'LotsBlocks.st', 5:9
+        0025:  block_return     
+
+        name: do:-block1
+        qualifiedName: do:>>do:-block1
+        nargs: 0
+        nlocals: 0
+        0000:  push_local     1, 0
+        0005:  dbg 'LotsBlocks.st', 5:38
+        0012:  push_local     1, 1
+        0017:  send           0, 'value'
+        0022:  dbg 'LotsBlocks.st', 5:28
+        0029:  send           1, 'value:'
+        0034:  pop              
+        0035:  dbg 'LotsBlocks.st', 5:46
+        0042:  dbg 'LotsBlocks.st', 5:53
+        0049:  push_local     1, 1
+        0054:  send           0, 'nextLink'
+        0059:  store_local    1, 1
+        0064:  dbg 'LotsBlocks.st', 5:62
+        0071:  block_return     

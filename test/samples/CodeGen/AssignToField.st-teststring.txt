@@ -1,0 +1,14 @@
+name: T
+superClass: 
+fields: x
+literals: 
+methods:
+    name: foo
+    qualifiedName: T>>foo
+    nargs: 0
+    nlocals: 1
+    0000:  push_local     0, 0
+    0005:  store_field    0
+    0008:  pop              
+    0009:  self             
+    0010:  return           

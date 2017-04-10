@@ -1,0 +1,25 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'Transcript','show:','to:do:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  push_int       1
+    0005:  push_int       5
+    0010:  block          0
+    0013:  send           2, 'to:do:'
+    0018:  pop              
+    0019:  self             
+    0020:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 1
+        nlocals: 0
+        0000:  push_global    'Transcript'
+        0003:  push_local     0, 0
+        0008:  send           1, 'show:'
+        0013:  block_return     

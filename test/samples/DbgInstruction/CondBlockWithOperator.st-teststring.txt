@@ -1,0 +1,37 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'CondBlockWithOperator.st','p','~~','ifTrue:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  block          0
+    0003:  block          1
+    0006:  dbg 'CondBlockWithOperator.st', 1:9
+    0013:  send           1, 'ifTrue:'
+    0018:  dbg 'CondBlockWithOperator.st', 1:20
+    0025:  pop              
+    0026:  self             
+    0027:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 0
+        nlocals: 0
+        0000:  dbg 'CondBlockWithOperator.st', 1:2
+        0007:  push_global    'p'
+        0010:  nil              
+        0011:  send           1, '~~'
+        0016:  dbg 'CondBlockWithOperator.st', 1:7
+        0023:  block_return     
+
+        name: main-block1
+        qualifiedName: main>>main-block1
+        nargs: 0
+        nlocals: 0
+        0000:  dbg 'CondBlockWithOperator.st', 1:17
+        0007:  nil              
+        0008:  dbg 'CondBlockWithOperator.st', 1:19
+        0015:  block_return     

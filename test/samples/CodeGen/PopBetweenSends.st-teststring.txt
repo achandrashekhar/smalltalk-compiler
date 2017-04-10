@@ -1,0 +1,38 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'ifTrue:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  false            
+    0001:  block          0
+    0004:  send           1, 'ifTrue:'
+    0009:  pop              
+    0010:  true             
+    0011:  block          1
+    0014:  send           1, 'ifTrue:'
+    0019:  pop              
+    0020:  push_int       1
+    0025:  return           
+    0026:  pop              
+    0027:  self             
+    0028:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 0
+        nlocals: 0
+        0000:  push_int       99
+        0005:  return           
+        0006:  block_return     
+
+        name: main-block1
+        qualifiedName: main>>main-block1
+        nargs: 0
+        nlocals: 0
+        0000:  push_int       100
+        0005:  return           
+        0006:  block_return     

@@ -1,0 +1,29 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'TestSendDbgWithNestedSends.st','abc','size','to:do:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  push_int       1
+    0005:  dbg 'TestSendDbgWithNestedSends.st', 1:12
+    0012:  push_literal   'abc'
+    0015:  send           0, 'size'
+    0020:  block          0
+    0023:  dbg 'TestSendDbgWithNestedSends.st', 1:2
+    0030:  send           2, 'to:do:'
+    0035:  dbg 'TestSendDbgWithNestedSends.st', 1:24
+    0042:  pop              
+    0043:  self             
+    0044:  return           
+    blocks:
+        name: main-block0
+        qualifiedName: main>>main-block0
+        nargs: 0
+        nlocals: 0
+        0000:  dbg 'TestSendDbgWithNestedSends.st', 1:21
+        0007:  nil              
+        0008:  dbg 'TestSendDbgWithNestedSends.st', 1:23
+        0015:  block_return     

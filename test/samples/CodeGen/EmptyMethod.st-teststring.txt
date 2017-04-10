@@ -1,0 +1,11 @@
+name: T
+superClass: 
+fields: 
+literals: 
+methods:
+    name: f
+    qualifiedName: T>>f
+    nargs: 0
+    nlocals: 0
+    0000:  self             
+    0001:  return           

@@ -1,0 +1,17 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 'TestExprDbgInstructions.st','x','=='
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  dbg 'TestExprDbgInstructions.st', 1:1
+    0007:  push_global    'x'
+    0010:  nil              
+    0011:  send           1, '=='
+    0016:  dbg 'TestExprDbgInstructions.st', 1:6
+    0023:  pop              
+    0024:  self             
+    0025:  return           

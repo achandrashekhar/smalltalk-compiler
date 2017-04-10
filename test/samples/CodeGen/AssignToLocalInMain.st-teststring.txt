@@ -1,0 +1,14 @@
+name: MainClass
+superClass: 
+fields: 
+literals: 
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 2
+    0000:  push_local     0, 1
+    0005:  store_local    0, 0
+    0010:  pop              
+    0011:  self             
+    0012:  return           

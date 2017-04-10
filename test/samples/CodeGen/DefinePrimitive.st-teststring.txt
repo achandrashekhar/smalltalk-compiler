@@ -1,0 +1,9 @@
+name: String
+superClass: 
+fields: 
+literals: 
+methods:
+    name: asArray
+    qualifiedName: String>>asArray
+    nargs: 0
+    nlocals: 0
