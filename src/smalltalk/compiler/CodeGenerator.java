@@ -113,7 +113,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	}
 
 	public int getLiteralIndex(String s) {
-		return currentClassScope.stringTable.add(s);
+		return 0;
 	}
 
 	public Code dbgAtEndMain(Token t) {
@@ -136,49 +136,11 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	}
 
 	public Code store(String id) {
-		STBlock scope = (STBlock)currentScope;
-		Symbol sym = scope.resolve(id);
-		if ( sym==null ) return Code.None;
-		if ( sym.getScope() instanceof STBlock ) { // arg or local
-			STBlock methodScope = (STBlock)sym.getScope();
-			int s = scope.getRelativeScopeCount(id);
-			int lit = methodScope.getLocalIndex(id);
-			return Compiler.store_local(s, lit);
-		}
-		else if ( sym.getScope() instanceof STClass ) {
-			STClass classWithField = (STClass)sym.getScope();
-			int i = classWithField.getFieldIndex(id);
-			return Compiler.store_field(i);
-		}
-		// else must be global; we can't store into globals, only load
-		// class names and such.
-		return Code.None;
+		return null;
 	}
 
 	public Code push(String id) {
-		STBlock scope = (STBlock)currentScope;
-		Symbol sym = scope.resolve(id);
-		if ( sym!=null && sym.getScope() instanceof STClass ) {
-			STClass clazz = (STClass)sym.getScope();
-			ClassSymbol superClassScope = clazz.getSuperClassScope();
-			int numInheritedFields = 0;
-			if ( superClassScope!=null ) {
-				numInheritedFields = superClassScope.getNumberOfFields();
-			}
-			int i = numInheritedFields + sym.getInsertionOrderNumber();
-			return Compiler.push_field(i);
-		}
-		else if ( sym!=null && sym.getScope() instanceof STBlock) { // arg or local for block or method
-			STBlock methodScope = (STBlock)sym.getScope();
-			int s = scope.getRelativeScopeCount(id);
-			int lit = methodScope.getLocalIndex(id);
-			return Compiler.push_local(s, lit);
-		}
-		else {
-			// must be class or global object; bind late so just use literal
-			int lit = getLiteralIndex(id);
-			return Compiler.push_global(lit);
-		}
+		return null;
 	}
 
 	public Code sendKeywordMsg(ParserRuleContext receiver,
@@ -186,33 +148,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 							   List<SmalltalkParser.BinaryExpressionContext> args,
 							   List<TerminalNode> keywords)
 	{
-		Code code = receiverCode;
-		// push all args
-		for (SmalltalkParser.BinaryExpressionContext ectx : args) {
-			Code elCode = visit(ectx);
-			code = code.join(elCode);
-		}
-		// compute selector and gen a msg send
-		String selector = Utils.join(Utils.map(keywords, TerminalNode::getText), "");
-		int literalIndex = getLiteralIndex(selector);
-		Code send;
-		if ( receiver instanceof TerminalNode &&
-			 receiver.getStart().getType()==SmalltalkParser.SUPER )
-		{
-			send = Compiler.send_super(args.size(), literalIndex);
-		}
-		else {
-			send = Compiler.send(args.size(), literalIndex);
-		}
-		if ( compiler.genDbg ) {
-			send = Code.join(dbg(keywords.get(0).getSymbol()), send);
-		}
-		code = code.join(send);
-		return code;
+		return null;
 	}
 
 	public String getProgramSourceForSubtree(ParserRuleContext ctx) {
-		return compiler.getText(ctx);
+		return null;
 	}
-
 }
