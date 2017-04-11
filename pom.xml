@@ -56,7 +56,7 @@
 		    <artifactId>smalltalk-vm</artifactId>
 		    <version>1.0</version>
 		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/smalltalk-vm-1.0-complete.jar</systemPath>
+		    <systemPath>${project.basedir}/lib/smalltalk-vm-1.0.jar</systemPath>
 		</dependency>
 	</dependencies>
 

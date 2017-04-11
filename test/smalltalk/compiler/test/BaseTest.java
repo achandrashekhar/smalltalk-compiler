@@ -86,9 +86,9 @@ public class BaseTest {
 			VirtualMachine vm = new VirtualMachine();
 
 			// load linked list, dict, and core stuff
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL lib = cl.getResource("stlib.zip");
-			vm.loadZippedLib(lib.getFile());
+//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//			URL lib = cl.getResource("stlib.zip");
+//			vm.loadZippedLib(lib.getFile());
 
 			File outputFile = new File(tmpdir+"/test.st");
 			String outputPath = outputFile.getParent();
