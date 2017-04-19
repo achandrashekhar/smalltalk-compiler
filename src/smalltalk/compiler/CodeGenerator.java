@@ -74,13 +74,14 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		return compiledMethod;
 	}
 
-	/*
-	All expressions have values. Must pop each expression value off, except
-	last one, which is the block return value. So, we pop after each expr
-	unless we're compiling a method block and the expr is not a ^expr. In a
-	code block, we pop if we're not the last instruction of the block.
+	/**
+	 All expressions have values. Must pop each expression value off, except
+	 last one, which is the block return value. Visit method for blocks will
+	 issue block_return instruction. Visit method for method will issue
+	 pop self return.  If last expression is ^expr, the block_return or
+	 pop self return is dead code but it is always there as a failsafe.
 
-	localVars? expr ('.' expr)* '.'?
+	 localVars? expr ('.' expr)* '.'?
 	 */
 	@Override
 	public Code visitFullBody(SmalltalkParser.FullBodyContext ctx) {
