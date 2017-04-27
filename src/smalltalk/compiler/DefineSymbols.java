@@ -204,4 +204,5 @@ public class DefineSymbols extends SmalltalkBaseListener {
 //		}
 		currentScope = currentScope.getEnclosingScope();
 	}
+
 }
