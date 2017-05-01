@@ -20,6 +20,7 @@ public class TestDbgInstruction extends BaseTest {
 		this.expecting = expecting;
 	}
 
+	@Ignore
 	@Test
 	public void testCode() throws Exception {
 		boolean genDbg = true;
