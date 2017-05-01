@@ -39,6 +39,7 @@ public class Compiler {
 	}
 
 	public STSymbolTable compile(String fileName, String input) {
+
 		return symtab;
 	}
 
@@ -74,12 +75,14 @@ public class Compiler {
 
 	public STBlock createBlock(STMethod currentMethod, ParserRuleContext tree) {
 //		System.out.println("create block in "+currentMethod+" "+args);
-		return null;
+		STBlock stBlock = new STBlock(currentMethod,tree);
+		return stBlock;
 	}
 
 	public STMethod createMethod(String selector, ParserRuleContext tree) {
 //		System.out.println("	create method "+selector+" "+args);
-		return null;
+		STMethod stMethod = new STMethod(selector,tree);
+		return stMethod;
 	}
 
 	public STPrimitiveMethod createPrimitiveMethod(STClass currentClass,
@@ -90,7 +93,8 @@ public class Compiler {
 //		System.out.println("	create primitive "+selector+" "+args+"->"+primitiveName);
 		// convert "<classname>_<methodname>" Primitive value
 		// warn if classname!=currentClass
-		return null;
+		STPrimitiveMethod stPrimitiveMethod = new STPrimitiveMethod(selector,tree,primitiveName);
+		return stPrimitiveMethod;
 	}
 
 
@@ -126,6 +130,7 @@ public class Compiler {
 	public static Code push_self()				{ return Code.of(Bytecode.SELF); }
 	public static Code method_return()          { return Code.of(Bytecode.RETURN); }
 
+
 	public static Code dbg(int filenameLitIndex, int line, int charPos) {
 		return null;
 	}
@@ -147,4 +152,5 @@ public class Compiler {
 	public void error(String msg, Exception e) {
 		errors.add(msg+"\n"+ Arrays.toString(e.getStackTrace()));
 	}
+
 }
