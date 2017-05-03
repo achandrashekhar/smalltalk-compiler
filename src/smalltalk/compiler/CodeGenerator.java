@@ -76,18 +76,22 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitMain(SmalltalkParser.MainContext ctx) {
+		Code code = Code.None;
 		currentScope = ctx.scope;
 		currentClassScope = ctx.classScope;
-		pushScope(ctx.scope);
-		Code code = visitChildren(ctx);
-		STCompiledBlock block = new STCompiledBlock(currentClassScope,(STBlock)currentScope);
-		ctx.scope.compiledBlock = block;
-		code = aggregateResult(code,Compiler.pop());
-		code = aggregateResult(code,Compiler.push_self());
-		code = aggregateResult(code,Compiler.method_return());
-		ctx.scope.compiledBlock.bytecode = code.bytes();
-		popScope();
-		return code;
+		if(currentScope!=null) {
+			pushScope(ctx.scope);
+			 code = visitChildren(ctx);
+			STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
+			ctx.scope.compiledBlock = block;
+			code = aggregateResult(code, Compiler.pop());
+			code = aggregateResult(code, Compiler.push_self());
+			code = aggregateResult(code, Compiler.method_return());
+			ctx.scope.compiledBlock.bytecode = code.bytes();
+			popScope();
+		}
+			return code;
+
 	}
 
 	/**
