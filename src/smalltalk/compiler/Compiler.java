@@ -2,9 +2,7 @@ package smalltalk.compiler;
 
 import org.antlr.symtab.Scope;
 import org.antlr.symtab.VariableSymbol;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import smalltalk.compiler.symbols.STArg;
 import smalltalk.compiler.symbols.STBlock;
@@ -15,10 +13,13 @@ import smalltalk.compiler.symbols.STPrimitiveMethod;
 import smalltalk.compiler.symbols.STSymbolTable;
 import smalltalk.compiler.symbols.STVariable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+
+import static smalltalk.compiler.misc.Utils.*;
 
 public class Compiler {
 	protected STSymbolTable symtab;
@@ -39,7 +40,13 @@ public class Compiler {
 	}
 
 	public STSymbolTable compile(String fileName, String input) {
-
+		ParserRuleContext tree = parseClasses(new ANTLRInputStream(input));
+		if(tree!=null){
+			defSymbols(tree);
+			resolveSymbols(tree);
+		}
+		CodeGenerator codeGenerator = new CodeGenerator(this);
+		codeGenerator.visit(tree);
 		return symtab;
 	}
 
@@ -128,7 +135,32 @@ public class Compiler {
 
 	public static Code push_nil() 				{ return Code.of(Bytecode.NIL); }
 	public static Code push_self()				{ return Code.of(Bytecode.SELF); }
+	public static Code pop(){return Code.of(Bytecode.POP);}
 	public static Code method_return()          { return Code.of(Bytecode.RETURN); }
+	public static Code push_int(int i){return Code.of(Bytecode.PUSH_INT).join(intToBytes(i));}
+	public static Code push_float(float f){return Code.of(Bytecode.PUSH_FLOAT).join(floatToBytes(f));}
+	public static Code push_local(int context,int i){
+		return Code.of(Bytecode.PUSH_LOCAL).join(intToBytes(context)).join(intToBytes(i));
+	}
+	public static Code push_field(int i){
+		return Code.of(Bytecode.PUSH_FIELD).join(intToBytes(i));
+	}
+
+	public static Code push_true(){
+		return Code.of(Bytecode.TRUE);
+	}
+
+	public static Code push_false(){
+		return Code.of(Bytecode.FALSE);
+	}
+
+	public static Code push_global(int globalIndex){
+		return Code.of(Bytecode.PUSH_GLOBAL).join(toLiteral(globalIndex));
+	}
+
+	public static Code push_literal(int literalIndex){
+		return Code.of(Bytecode.PUSH_LITERAL).join(toLiteral(literalIndex));
+	}
 
 
 	public static Code dbg(int filenameLitIndex, int line, int charPos) {
@@ -151,6 +183,10 @@ public class Compiler {
 
 	public void error(String msg, Exception e) {
 		errors.add(msg+"\n"+ Arrays.toString(e.getStackTrace()));
+	}
+
+	public static Code send(int args, int keywordIndex){
+		return Code.of(Bytecode.SEND).join(shortToBytes(args)).join(toLiteral(keywordIndex));
 	}
 
 }
