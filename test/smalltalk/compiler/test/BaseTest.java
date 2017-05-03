@@ -9,8 +9,6 @@ import smalltalk.compiler.Compiler;
 import smalltalk.compiler.STC;
 import smalltalk.compiler.symbols.STClass;
 import smalltalk.compiler.symbols.STSymbolTable;
-import smalltalk.vm.VirtualMachine;
-import smalltalk.vm.primitive.STObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,46 +77,6 @@ public class BaseTest {
 	}
 
 	public static final String tmpdir = System.getProperty("java.io.tmpdir")+"/test";
-	public void execAndCheck(String input, String expecting,
-	                         boolean trace, boolean genDbg)
-	{
-		try {
-			VirtualMachine vm = new VirtualMachine();
-
-			// load linked list, dict, and core stuff
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL lib = cl.getResource("stlib.zip");
-//			vm.loadZippedLib(lib.getFile());
-
-			File outputFile = new File(tmpdir+"/test.st");
-			String outputPath = outputFile.getParent();
-			eraseFiles(outputPath);
-			File outputDir = new File(outputPath);
-			outputDir.mkdirs();
-
-			STSymbolTable symtab = new STSymbolTable();
-			Files.write(outputFile.toPath(), input.getBytes());
-			STC.compile(symtab, outputFile.toString(), genDbg);
-			STC.writeObjectFiles(outputPath, Paths.get(outputFile.toURI()).getFileName().toString(), symtab);
-			vm.loadLibDir(outputPath); // load all .sto in that dir compiled from test.st
-
-			STObject result = vm.execMain();
-			assertEquals(expecting, result.toString());
-		}
-		catch (IOException ioe) {
-			ioe.printStackTrace(System.err);
-		}
-	}
-
-	public void execAndCheck(String input, String expecting, boolean genDbg) {
-		boolean trace = false;
-		execAndCheck(input, expecting, trace, genDbg);
-	}
-
-	public void execAndCheck(String input, String expecting) {
-		boolean genDbg = true;
-		execAndCheck(input, expecting, genDbg);
-	}
 
 	protected void eraseFiles(String dir) {
 		if (dir == null) {
