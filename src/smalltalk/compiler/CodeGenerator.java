@@ -246,10 +246,13 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			} else {
 				code = Compiler.push_int(Integer.parseInt(ctx.NUMBER().getText()));
 			}
+		} else if (ctx.CHAR() != null){
+			char c = ctx.CHAR().getText().charAt(1);
+			code.join(Compiler.push_char(c));
 		}
-		else {
-			if (!(ctx.getText().equals("nil") || ctx.getText().equals("self")
-					|| ctx.getText().equals("true") || ctx.getText().equals("false"))) {
+		else if(ctx.STRING()!=null) {
+//			if (!(ctx.getText().equals("nil") || ctx.getText().equals("self")
+//					|| ctx.getText().equals("true") || ctx.getText().equals("false"))) {
 				String stringToBePushed = ctx.getText();
 				if (stringToBePushed.contains("\'")) {
 					stringToBePushed = stringToBePushed.replace("\'", "");
@@ -275,7 +278,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 			}
 
-		}
 		return code;
 	}
 
@@ -294,7 +296,21 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitBinaryExpression(SmalltalkParser.BinaryExpressionContext ctx) {
-		Code code = visit(ctx.unaryExpression(0));
+//		Code code = visit(ctx.unaryExpression(0));
+//		return code;
+		//unaryExpression ( bop unaryExpression )*
+		Code code =  visit(ctx.unaryExpression(0));
+		if (ctx.bop().size() != 0){
+			String str;
+			for (int i = 1 ; i <= ctx.bop().size();i++){
+				code = aggregateResult(code, visit(ctx.unaryExpression(i)));
+				str = ctx.bop().get(i-1).getText();
+				currentClassScope.stringTable.add(ctx.bop().get(i-1).getText());
+				int index = getLiteralIndex(str);
+				//Before you join code for Send
+				code = aggregateResult(code,Compiler.send(1,index));
+			}
+		}
 		return code;
 	}
 
@@ -344,6 +360,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitPassThrough(SmalltalkParser.PassThroughContext ctx) {
+		System.out.println("going here");
 		return visit(ctx.binaryExpression());
 	}
 
@@ -420,6 +437,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	public String getProgramSourceForSubtree(ParserRuleContext ctx) {
 		return null;
 	}
+
+
 
 
 }

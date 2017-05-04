@@ -161,6 +161,7 @@ public class Compiler {
 	public static Code push_literal(int literalIndex){
 		return Code.of(Bytecode.PUSH_LITERAL).join(toLiteral(literalIndex));
 	}
+	public static Code push_char(int c)			    { return Code.of(Bytecode.PUSH_CHAR).join(shortToBytes(c)); }
 
 	public static Code block(int b) 			    { return Code.of(Bytecode.BLOCK).join(shortToBytes(b)); }
 	public static Code block_return() {
