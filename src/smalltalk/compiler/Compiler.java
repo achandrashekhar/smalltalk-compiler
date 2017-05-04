@@ -143,7 +143,7 @@ public class Compiler {
 		return Code.of(Bytecode.PUSH_LOCAL).join(shortToBytes(context)).join(shortToBytes(i));
 	}
 	public static Code push_field(int i){
-		return Code.of(Bytecode.PUSH_FIELD).join(intToBytes(i));
+		return Code.of(Bytecode.PUSH_FIELD).join(toLiteral(i));
 	}
 
 	public static Code push_true(){
@@ -203,4 +203,5 @@ public class Compiler {
 	public static Code store_local(int d, int i) {
 		return Code.of(Bytecode.STORE_LOCAL).join(shortToBytes(d)).join(shortToBytes(i));
 	}
+	public static Code send_super(int size, int i)  { return Code.of(Bytecode.SEND_SUPER).join(toLiteral(size).join(toLiteral(i))); }
 }

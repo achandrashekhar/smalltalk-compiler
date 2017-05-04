@@ -88,14 +88,14 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 				blockIndex++;
 			}
 			ctx.scope.compiledBlock = block;
-			popScope();
+
 //			if (ctx.body() instanceof  SmalltalkParser.FullBodyContext) {
 //				code = aggregateResult(code, Compiler.pop());
 //			}
 			code = aggregateResult(code, Compiler.push_self());
 			code = aggregateResult(code, Compiler.method_return());
 			ctx.scope.compiledBlock.bytecode = code.bytes();
-
+			popScope();
 		}
 			return code;
 
@@ -154,6 +154,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 //
 //		return code1;
 		Code code = new Code();
+//		code = visit(ctx.localVars());
 		List<SmalltalkParser.StatContext> stats = ctx.stat();
 		for (int i = 0; i < stats.size(); i++) {
 			code = code.join(visit(ctx.stat(i)));
@@ -394,6 +395,27 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		ctx.scope.compiledBlock = block;
 		ctx.scope.compiledBlock.bytecode = code.bytes();
 		popScope();
+		return Code.None;
+	}
+//
+//	@Override
+//	public Code visitLocalVars(SmalltalkParser.LocalVarsContext ctx) {
+////		System.out.println(ctx.ID().size());
+//		Code code= Code.None;
+//		for(int i = 0;i<ctx.ID().size();i++) {
+//			System.out.println("yep "+ctx.ID(i).getText());
+//			STBlock stBlock = (STBlock)currentScope;
+//			int j = stBlock.getLocalIndex(ctx.ID(i).getText());
+//			int d = stBlock.getRelativeScopeCount(ctx.ID(i).getText());
+//			code = Compiler.push_local(d,j);
+//
+//		}
+//		return code;
+//	}
+
+	@Override
+	public Code visitBop(SmalltalkParser.BopContext ctx) {
+		System.out.println("hmmmmmm");
 		return Code.None;
 	}
 
