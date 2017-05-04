@@ -117,8 +117,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 				blockIndex++;
 			}
 			ctx.scope.compiledBlock = block;
-			code = aggregateResult(code, Compiler.push_self());
-			code = aggregateResult(code, Compiler.method_return());
+//			code = aggregateResult(code, Compiler.push_self());
+//			code = aggregateResult(code, Compiler.method_return());
 			ctx.scope.compiledBlock.bytecode = code.bytes();
 			popScope();
 		return Code.None;
@@ -128,6 +128,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitSmalltalkMethodBlock(SmalltalkParser.SmalltalkMethodBlockContext ctx) {
 		Code code = visit(ctx.body());
+		code = aggregateResult(code, Compiler.push_self());
+		code = aggregateResult(code, Compiler.method_return());
 		return code;
 	}
 
@@ -219,7 +221,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		int index = 0;
 			if(ctx.sym instanceof STField){
 				code = Compiler.push_field(ctx.sym.getInsertionOrderNumber());
-			} if(ctx.sym instanceof VariableSymbol) {
+			} else if(ctx.sym instanceof VariableSymbol) {
 				STBlock stBlock = (STBlock)currentScope;
 				int i = stBlock.getLocalIndex(ctx.ID().getText());
 				int d = stBlock.getRelativeScopeCount(ctx.ID().getText());
@@ -358,7 +360,23 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitOperatorMethod(SmalltalkParser.OperatorMethodContext ctx) {
-		currentClassScope.stringTable.add(ctx.getText());
+
+		int blockIndex = 0;
+		Code code = Code.None;
+		currentScope = ctx.scope;
+		STMethod stMethod = new STMethod(ctx.ID().getText(),ctx);
+		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
+		block.blocks = new STCompiledBlock[stMethod.getAllNestedScopedSymbols().size()];
+		code = aggregateResult(code, visitChildren(ctx));
+		for(Scope symbol : stMethod.getAllNestedScopedSymbols()){
+			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
+			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
+			block.blocks[blockIndex] = stCompiledBlock;
+			blockIndex++;
+		}
+		ctx.scope.compiledBlock = block;
+		ctx.scope.compiledBlock.bytecode = code.bytes();
+		popScope();
 		return Code.None;
 	}
 
