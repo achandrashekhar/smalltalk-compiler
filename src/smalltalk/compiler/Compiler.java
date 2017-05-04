@@ -140,7 +140,7 @@ public class Compiler {
 	public static Code push_int(int i){return Code.of(Bytecode.PUSH_INT).join(intToBytes(i));}
 	public static Code push_float(float f){return Code.of(Bytecode.PUSH_FLOAT).join(floatToBytes(f));}
 	public static Code push_local(int context,int i){
-		return Code.of(Bytecode.PUSH_LOCAL).join(intToBytes(context)).join(intToBytes(i));
+		return Code.of(Bytecode.PUSH_LOCAL).join(shortToBytes(context)).join(shortToBytes(i));
 	}
 	public static Code push_field(int i){
 		return Code.of(Bytecode.PUSH_FIELD).join(intToBytes(i));
@@ -160,6 +160,15 @@ public class Compiler {
 
 	public static Code push_literal(int literalIndex){
 		return Code.of(Bytecode.PUSH_LITERAL).join(toLiteral(literalIndex));
+	}
+
+	public static Code block(int b) 			    { return Code.of(Bytecode.BLOCK).join(shortToBytes(b)); }
+	public static Code block_return() {
+		return Code.of(Bytecode.BLOCK_RETURN);
+	}
+
+	public static Code store_field(int index){
+		return Code.of(Bytecode.STORE_FIELD).join(shortToBytes(index));
 	}
 
 
@@ -189,4 +198,8 @@ public class Compiler {
 		return Code.of(Bytecode.SEND).join(shortToBytes(args)).join(toLiteral(keywordIndex));
 	}
 
+
+	public static Code store_local(int d, int i) {
+		return Code.of(Bytecode.STORE_LOCAL).join(shortToBytes(d)).join(shortToBytes(i));
+	}
 }

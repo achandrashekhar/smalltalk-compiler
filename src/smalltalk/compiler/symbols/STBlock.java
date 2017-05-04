@@ -2,6 +2,7 @@ package smalltalk.compiler.symbols;
 
 import org.antlr.symtab.MethodSymbol;
 import org.antlr.symtab.Scope;
+import org.antlr.symtab.Symbol;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /** A block is an anonymous method defined within a method or another block.
@@ -41,6 +42,8 @@ public class STBlock extends MethodSymbol {
 	public int numNestedBlocks;
 
 	public STCompiledBlock compiledBlock;
+	Scope scope = this;
+	int scopeNum = 0;
 
 	/** Used by subclass STMethod */
 	protected STBlock(String name, ParserRuleContext tree) {
@@ -58,9 +61,11 @@ public class STBlock extends MethodSymbol {
 
 	public boolean isMethod() { return false; }
 
-	public int nargs() { return 0; } // fill in
+	public int nargs() {
+	return this.getNumberOfParameters();
+	} // fill in
 
-	public int nlocals() { return 0; } // fill in
+	public int nlocals() { return this.getNumberOfVariables(); } // fill in
 
 	/** Given the name of a local variable or argument, return the index from 0.
 	 *  The arguments come first and then the locals. For example,
@@ -69,7 +74,7 @@ public class STBlock extends MethodSymbol {
 	 */
 	public int getLocalIndex(String name) {
 		// fill in
-		return 0;
+		return this.resolve(name).getInsertionOrderNumber();
 	}
 
 	/** Look for name in current block; keep looking upwards in
@@ -78,6 +83,17 @@ public class STBlock extends MethodSymbol {
 	 */
 	public int getRelativeScopeCount(String name) {
 		// fill in
-		return 0;
+		for(Symbol symbol : scope.getAllSymbols()){
+			if(symbol.getName().equals(name)) {
+				return scopeNum;
+			} else {
+				scopeNum++;
+				scope  = scope.getEnclosingScope();
+				getRelativeScopeCount(name);
+			}
+
+		}
+		return -1;
 	}
+
 }
