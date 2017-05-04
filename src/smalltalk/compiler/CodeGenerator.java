@@ -1,9 +1,6 @@
 package smalltalk.compiler;
 
-import org.antlr.symtab.ClassSymbol;
-import org.antlr.symtab.Scope;
-import org.antlr.symtab.Symbol;
-import org.antlr.symtab.Utils;
+import org.antlr.symtab.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -202,6 +199,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			code = aggregateResult(code,visit(str));
 		}
 //		currentClassScope.stringTable.add(ctx.KEYWORD(0).getText());
+		System.out.println(ctx.args.size());
 		code = sendKeywordMsg(ctx.recv,code,ctx.args,ctx.KEYWORD());
 		return code;
 	}
@@ -219,22 +217,20 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 //		return code;
 		Code code = Code.None;
 		int index = 0;
-		if(ctx.ID().getText().equals("Transcript")){
-			index = currentClassScope.stringTable.add(ctx.ID().getText());
-			code = Compiler.push_global(index);
-		}
-		else {
 			if(ctx.sym instanceof STField){
 				code = Compiler.push_field(ctx.sym.getInsertionOrderNumber());
-			} else {
+			} if(ctx.sym instanceof VariableSymbol) {
 				STBlock stBlock = (STBlock)currentScope;
 				int i = stBlock.getLocalIndex(ctx.ID().getText());
 				int d = stBlock.getRelativeScopeCount(ctx.ID().getText());
 				code = Compiler.push_local(d,i);
+			} else {
+				index = currentClassScope.stringTable.add(ctx.ID().getText());
+				code = Compiler.push_global(index);
 			}
 
 
-		}
+
 		return code;
 	}
 
@@ -393,8 +389,12 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 							   List<SmalltalkParser.BinaryExpressionContext> args,
 							   List<TerminalNode> keywords)
 	{
+		StringBuilder sb = new StringBuilder();
+		for(int i =0;i<keywords.size();i++){
+			sb.append(keywords.get(i));
+		}
 		Code code = receiverCode;
-		Code e = Compiler.send(args.size(),currentClassScope.stringTable.add(keywords.get(0).getText()));
+		Code e = Compiler.send(args.size(),currentClassScope.stringTable.add(sb.toString()));
 		code = aggregateResult(code,e);
 		return code;
 	}

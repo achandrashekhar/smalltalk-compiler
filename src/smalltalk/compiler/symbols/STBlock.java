@@ -65,7 +65,7 @@ public class STBlock extends MethodSymbol {
 	return this.getNumberOfParameters();
 	} // fill in
 
-	public int nlocals() { return this.getNumberOfVariables(); } // fill in
+	public int nlocals() { return this.getNumberOfVariables()-this.getNumberOfParameters(); } // fill in
 
 	/** Given the name of a local variable or argument, return the index from 0.
 	 *  The arguments come first and then the locals. For example,
