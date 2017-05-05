@@ -506,4 +506,14 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		popScope();
 		return code;
 	}
+
+	@Override
+	public Code visitUnaryMsgSend(SmalltalkParser.UnaryMsgSendContext ctx) {
+		Code code = new Code();
+		String str = ctx.ID().getText();
+		int index = getLiteralIndex(str);
+		code = Compiler.push_field(0);
+		code.join(Compiler.send(0, index));
+		return code;
+	}
 }
