@@ -127,9 +127,23 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitSmalltalkMethodBlock(SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+		int blockIndex = 0;
 		Code code = visit(ctx.body());
 		code = aggregateResult(code, Compiler.push_self());
 		code = aggregateResult(code, Compiler.method_return());
+		STMethod stMethod = (STMethod) currentScope;
+		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
+		block.blocks = new STCompiledBlock[stMethod.getAllNestedScopedSymbols().size()];
+		for(Scope symbol : stMethod.getAllNestedScopedSymbols()){
+			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
+			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
+			block.blocks[blockIndex] = stCompiledBlock;
+			blockIndex++;
+		}
+		((STBlock)currentScope).compiledBlock = block;
+//			code = aggregateResult(code, Compiler.push_self());
+//			code = aggregateResult(code, Compiler.method_return());
+		((STBlock)currentScope).compiledBlock.bytecode = code.bytes();
 		return code;
 	}
 
@@ -220,18 +234,19 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 //		return code;
 		Code code = Code.None;
 		int index = 0;
-			if(ctx.sym instanceof STField){
-				System.out.println(ctx.ID().getText());
-				code = Compiler.push_field(fieldIndex(ctx.sym));
-			} else if(ctx.sym instanceof VariableSymbol) {
-				STBlock stBlock = (STBlock)currentScope;
+		if(ctx.sym instanceof STField){
+			System.out.println(ctx.ID().getText());
+			code = Compiler.push_field(fieldIndex(ctx.sym));
+		} else if(ctx.sym instanceof STVariable || ctx.sym instanceof STArg ) {
+			System.out.println("Name is "+ctx.sym.getName());
+				STBlock stBlock = (STBlock) currentScope;
 				int i = stBlock.getLocalIndex(ctx.ID().getText());
 				int d = stBlock.getRelativeScopeCount(ctx.ID().getText());
-				code = Compiler.push_local(d,i);
-			} else {
-				index = currentClassScope.stringTable.add(ctx.ID().getText());
-				code = Compiler.push_global(index);
-			}
+				code = Compiler.push_local(d, i);
+		} else {
+			index = currentClassScope.stringTable.add(ctx.ID().getText());
+			code = Compiler.push_global(index);
+		}
 
 
 
@@ -331,10 +346,12 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		STBlock stBlock = (STBlock) currentScope;
 		if(ctx.sym instanceof STField){
 			code = Compiler.store_field(ctx.sym.getInsertionOrderNumber());
-		} else {
+		} else  if(ctx.sym instanceof STVariable){
 			int i = stBlock.getInsertionOrderNumber();
 			int d = stBlock.getRelativeScopeCount(ctx.getText());
 			code = Compiler.store_local(d,i);
+		} else {
+			return Code.None;
 		}
 		  return code;
 	}
@@ -472,5 +489,21 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	}
 
 
+	@Override
+	public Code visitUnarySuperMsgSend(SmalltalkParser.UnarySuperMsgSendContext ctx) {
+		Code code = new Code();
+		String str = ctx.ID().getText();
+		int index = getLiteralIndex(str);
+		code.join(Compiler.push_self()).join(Compiler.send_super(0, index));
+		return code;
+	}
 
+	@Override
+	public Code visitKeywordMethod(SmalltalkParser.KeywordMethodContext ctx) {
+		currentScope = ctx.scope;
+		pushScope(currentScope);
+		Code code = visit(ctx.methodBlock());
+		popScope();
+		return code;
+	}
 }
