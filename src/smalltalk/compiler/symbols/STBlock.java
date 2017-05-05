@@ -86,14 +86,18 @@ public class STBlock extends MethodSymbol {
 		for(Symbol symbol : scope.getAllSymbols()){
 			if(symbol.getName().equals(name)) {
 				return scopeNum;
-			} else {
-				scopeNum++;
-				scope  = scope.getEnclosingScope();
-				getRelativeScopeCount(name);
 			}
-
 		}
-		return -1;
+
+			scopeNum++;
+			scope  = scope.getEnclosingScope();
+			if(scope!=null) {
+				getRelativeScopeCount(name);
+				return scopeNum;
+			}
+			else {
+				return -1;
+			}
 	}
 
 }

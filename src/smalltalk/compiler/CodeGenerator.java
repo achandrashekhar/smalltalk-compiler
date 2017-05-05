@@ -221,7 +221,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		Code code = Code.None;
 		int index = 0;
 			if(ctx.sym instanceof STField){
-				code = Compiler.push_field(ctx.sym.getInsertionOrderNumber());
+				System.out.println(ctx.ID().getText());
+				code = Compiler.push_field(fieldIndex(ctx.sym));
 			} else if(ctx.sym instanceof VariableSymbol) {
 				STBlock stBlock = (STBlock)currentScope;
 				int i = stBlock.getLocalIndex(ctx.ID().getText());
@@ -460,6 +461,15 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		return null;
 	}
 
+	private int fieldIndex(Symbol sym){
+		int index = ((STClass)sym.getScope()).getFieldIndex(sym.getName());
+		ClassSymbol s = ((STClass)sym.getScope()).getSuperClassScope();
+		while(s!=null){
+			index = index + s.getNumberOfDefinedFields();
+			s = s.getSuperClassScope();
+		}
+		return index;
+	}
 
 
 
