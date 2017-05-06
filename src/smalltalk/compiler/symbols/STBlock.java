@@ -81,8 +81,12 @@ public class STBlock extends MethodSymbol {
 	 *  enclosingScope until found; return how many scopes we had to
 	 *  jump to find name. 0 indicates same scope.
 	 */
-	public int getRelativeScopeCount(String name) {
+	public int getRelativeScopeCount(String name, int flag) {
 		// fill in
+        if(flag==0){
+            scope = this;
+            scopeNum = 0;
+        }
 		for(Symbol symbol : scope.getAllSymbols()){
 			if(symbol.getName().equals(name)) {
 				return scopeNum;
@@ -92,7 +96,7 @@ public class STBlock extends MethodSymbol {
 			scopeNum++;
 			scope  = scope.getEnclosingScope();
 			if(scope!=null) {
-				getRelativeScopeCount(name);
+				getRelativeScopeCount(name,1);
 				return scopeNum;
 			}
 			else {

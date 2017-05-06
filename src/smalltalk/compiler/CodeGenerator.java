@@ -106,21 +106,21 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		int blockIndex = 0;
 		Code code = Code.None;
 		currentScope = ctx.scope;
-			STMethod stMethod = new STMethod(ctx.ID().getText(),ctx);
-			STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
-			block.blocks = new STCompiledBlock[stMethod.getAllNestedScopedSymbols().size()];
-			code = aggregateResult(code, visitChildren(ctx));
-			for(Scope symbol : stMethod.getAllNestedScopedSymbols()){
-				STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
-				stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
-				block.blocks[blockIndex] = stCompiledBlock;
-				blockIndex++;
-			}
-			ctx.scope.compiledBlock = block;
+		STMethod stMethod = new STMethod(ctx.ID().getText(),ctx);
+		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
+		block.blocks = new STCompiledBlock[((STBlock) currentScope).getAllNestedScopedSymbols().size()];
+		code = aggregateResult(code, visitChildren(ctx));
+		for(Scope symbol : ((STBlock) currentScope).getAllNestedScopedSymbols()){
+			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
+			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
+			block.blocks[blockIndex] = stCompiledBlock;
+			blockIndex++;
+		}
+		ctx.scope.compiledBlock = block;
 //			code = aggregateResult(code, Compiler.push_self());
 //			code = aggregateResult(code, Compiler.method_return());
-			ctx.scope.compiledBlock.bytecode = code.bytes();
-			popScope();
+		ctx.scope.compiledBlock.bytecode = code.bytes();
+		popScope();
 		return Code.None;
 
 	}
@@ -241,7 +241,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			System.out.println("Name is "+ctx.sym.getName());
 				STBlock stBlock = (STBlock) currentScope;
 				int i = stBlock.getLocalIndex(ctx.ID().getText());
-				int d = stBlock.getRelativeScopeCount(ctx.ID().getText());
+				int d = stBlock.getRelativeScopeCount(ctx.ID().getText(),0);
 				code = Compiler.push_local(d, i);
 		} else {
 			index = currentClassScope.stringTable.add(ctx.ID().getText());
@@ -347,8 +347,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		if(ctx.sym instanceof STField){
 			code = Compiler.store_field(ctx.sym.getInsertionOrderNumber());
 		} else  if(ctx.sym instanceof STVariable){
-			int i = stBlock.getInsertionOrderNumber();
-			int d = stBlock.getRelativeScopeCount(ctx.getText());
+			int i = ctx.sym.getInsertionOrderNumber();
+			int d = stBlock.getRelativeScopeCount(ctx.getText(),0);
 			code = Compiler.store_local(d,i);
 		} else {
 			return Code.None;
@@ -500,9 +500,24 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitKeywordMethod(SmalltalkParser.KeywordMethodContext ctx) {
+		int blockIndex = 0;
 		currentScope = ctx.scope;
 		pushScope(currentScope);
-		Code code = visit(ctx.methodBlock());
+		Code code = defaultResult();
+		//Code code = visit(ctx.methodBlock());
+		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
+		block.blocks = new STCompiledBlock[((STBlock) currentScope).getAllNestedScopedSymbols().size()];
+		code = aggregateResult(code, visitChildren(ctx));
+		for(Scope symbol : ((STBlock) currentScope).getAllNestedScopedSymbols()){
+			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
+			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
+			block.blocks[blockIndex] = stCompiledBlock;
+			blockIndex++;
+		}
+		ctx.scope.compiledBlock = block;
+//			code = aggregateResult(code, Compiler.push_self());
+//			code = aggregateResult(code, Compiler.method_return());
+		ctx.scope.compiledBlock.bytecode = code.bytes();
 		popScope();
 		return code;
 	}
@@ -511,9 +526,13 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	public Code visitUnaryMsgSend(SmalltalkParser.UnaryMsgSendContext ctx) {
 		Code code = new Code();
 		String str = ctx.ID().getText();
+		Symbol sym = currentScope.resolve(str);
 		int index = getLiteralIndex(str);
-		code = Compiler.push_field(0);
+		//code = Compiler.push_field(0);
+		code = visit(ctx.unaryExpression());
 		code.join(Compiler.send(0, index));
 		return code;
 	}
+
+
 }
