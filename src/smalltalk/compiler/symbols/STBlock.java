@@ -81,6 +81,13 @@ public class STBlock extends MethodSymbol {
 	 *  enclosingScope until found; return how many scopes we had to
 	 *  jump to find name. 0 indicates same scope.
 	 */
+    /** added an extra argument, flag
+     *
+     * @param name what are we looking for?
+     * @param flag set this to 1, if we are recursively calling ourself, if we are being called by
+     *             Code generator, set flag to 0.
+     * @return scope number
+     */
 	public int getRelativeScopeCount(String name, int flag) {
 		// fill in
         if(flag==0){
