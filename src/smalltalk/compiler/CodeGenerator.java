@@ -88,10 +88,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 				blockIndex++;
 			}
 			ctx.scope.compiledBlock = block;
-
-//			if (ctx.body() instanceof  SmalltalkParser.FullBodyContext) {
-//				code = aggregateResult(code, Compiler.pop());
-//			}
 			code = aggregateResult(code, Compiler.push_self());
 			code = aggregateResult(code, Compiler.method_return());
 			ctx.scope.compiledBlock.bytecode = code.bytes();
@@ -106,7 +102,13 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		int blockIndex = 0;
 		Code code = Code.None;
 		currentScope = ctx.scope;
-		STMethod stMethod = new STMethod(ctx.ID().getText(),ctx);
+		getCode(ctx, blockIndex, code);
+		popScope();
+		return Code.None;
+
+	}
+
+	private void getCode(SmalltalkParser.MethodContext ctx, int blockIndex, Code code) {
 		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
 		block.blocks = new STCompiledBlock[((STBlock) currentScope).getAllNestedScopedSymbols().size()];
 		code = aggregateResult(code, visitChildren(ctx));
@@ -117,12 +119,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			blockIndex++;
 		}
 		ctx.scope.compiledBlock = block;
-//			code = aggregateResult(code, Compiler.push_self());
-//			code = aggregateResult(code, Compiler.method_return());
 		ctx.scope.compiledBlock.bytecode = code.bytes();
-		popScope();
-		return Code.None;
-
 	}
 
 	@Override
@@ -131,6 +128,12 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		Code code = visit(ctx.body());
 		code = aggregateResult(code, Compiler.push_self());
 		code = aggregateResult(code, Compiler.method_return());
+		getCodeforMainAndSmalltalkMethod(blockIndex);
+		((STBlock)currentScope).compiledBlock.bytecode = code.bytes();
+		return code;
+	}
+
+	private void getCodeforMainAndSmalltalkMethod(int blockIndex) {
 		STMethod stMethod = (STMethod) currentScope;
 		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
 		block.blocks = new STCompiledBlock[stMethod.getAllNestedScopedSymbols().size()];
@@ -141,10 +144,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			blockIndex++;
 		}
 		((STBlock)currentScope).compiledBlock = block;
-//			code = aggregateResult(code, Compiler.push_self());
-//			code = aggregateResult(code, Compiler.method_return());
-		((STBlock)currentScope).compiledBlock.bytecode = code.bytes();
-		return code;
 	}
 
 	/**
@@ -158,17 +157,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	 */
 	@Override
 	public Code visitFullBody(SmalltalkParser.FullBodyContext ctx) {
-		// fill in
-//		Code code = defaultResult();
-//		Code code1 = defaultResult();
-//		for(SmalltalkParser.StatContext stat : ctx.stat()){
-//			code = visit(stat);
-//			code1 = aggregateResult(code1,code);
-//		}
-//
-//		return code1;
 		Code code = new Code();
-//		code = visit(ctx.localVars());
 		List<SmalltalkParser.StatContext> stats = ctx.stat();
 		for (int i = 0; i < stats.size(); i++) {
 			code = code.join(visit(ctx.stat(i)));
@@ -176,11 +165,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 				code = code.join(Compiler.pop());
 		}
 		if(currentScope instanceof STMethod){
-		if(!currentScope.getName().equals("Main")) {
+		if(!currentScope.getName().equals("Main")) { //whatever got the test case to run
 
 			code = code.join(Compiler.pop());
 		}
-
 		}
 		return code;
 	}
@@ -198,12 +186,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitReturn(SmalltalkParser.ReturnContext ctx) {
-//		Code e = visit(ctx.messageExpression());
-//		if ( compiler.genDbg ) {
-//			e = Code.join(e, dbg(ctx.start)); // put dbg after expression as that is when it executes
-//		}
-//		Code code = e.join(Compiler.method_return());
-//		return code;
 		Code e = visit(ctx.messageExpression());
 		Code code = e.join(Compiler.method_return());
 		return code;
@@ -229,9 +211,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitId(SmalltalkParser.IdContext ctx) {
-//		int index = currentClassScope.stringTable.add(ctx.ID().getText());
-//		Code code = Compiler.push_global(index);
-//		return code;
 		Code code = Code.None;
 		int index = 0;
 		if(ctx.sym instanceof STField){
@@ -247,9 +226,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			index = currentClassScope.stringTable.add(ctx.ID().getText());
 			code = Compiler.push_global(index);
 		}
-
-
-
 		return code;
 	}
 
@@ -268,8 +244,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			code.join(Compiler.push_char(c));
 		}
 		else if(ctx.STRING()!=null) {
-//			if (!(ctx.getText().equals("nil") || ctx.getText().equals("self")
-//					|| ctx.getText().equals("true") || ctx.getText().equals("false"))) {
 				String stringToBePushed = ctx.getText();
 				if (stringToBePushed.contains("\'")) {
 					stringToBePushed = stringToBePushed.replace("\'", "");
@@ -313,9 +287,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitBinaryExpression(SmalltalkParser.BinaryExpressionContext ctx) {
-//		Code code = visit(ctx.unaryExpression(0));
-//		return code;
-		//unaryExpression ( bop unaryExpression )*
 		Code code =  visit(ctx.unaryExpression(0));
 		if (ctx.bop().size() != 0){
 			String str;
@@ -361,12 +332,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	}
 
 	public void popScope() {
-//		if ( currentScope.getEnclosingScope()!=null ) {
-//			System.out.println("popping from " + currentScope.getScopeName() + " to " + currentScope.getEnclosingScope().getScopeName());
-//		}
-//		else {
-//			System.out.println("popping from " + currentScope.getScopeName() + " to null");
-//		}
 		currentScope = currentScope.getEnclosingScope();
 	}
 
@@ -400,40 +365,14 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		int blockIndex = 0;
 		Code code = Code.None;
 		currentScope = ctx.scope;
-		STMethod stMethod = new STMethod(ctx.ID().getText(),ctx);
-		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
-		block.blocks = new STCompiledBlock[stMethod.getAllNestedScopedSymbols().size()];
-		code = aggregateResult(code, visitChildren(ctx));
-		for(Scope symbol : stMethod.getAllNestedScopedSymbols()){
-			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
-			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
-			block.blocks[blockIndex] = stCompiledBlock;
-			blockIndex++;
-		}
-		ctx.scope.compiledBlock = block;
-		ctx.scope.compiledBlock.bytecode = code.bytes();
+		getCode(ctx, blockIndex, code);
 		popScope();
 		return Code.None;
 	}
-//
-//	@Override
-//	public Code visitLocalVars(SmalltalkParser.LocalVarsContext ctx) {
-////		System.out.println(ctx.ID().size());
-//		Code code= Code.None;
-//		for(int i = 0;i<ctx.ID().size();i++) {
-//			System.out.println("yep "+ctx.ID(i).getText());
-//			STBlock stBlock = (STBlock)currentScope;
-//			int j = stBlock.getLocalIndex(ctx.ID(i).getText());
-//			int d = stBlock.getRelativeScopeCount(ctx.ID(i).getText());
-//			code = Compiler.push_local(d,j);
-//
-//		}
-//		return code;
-//	}
+
 
 	@Override
 	public Code visitBop(SmalltalkParser.BopContext ctx) {
-		System.out.println("hmmmmmm");
 		return Code.None;
 	}
 
@@ -504,20 +443,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		currentScope = ctx.scope;
 		pushScope(currentScope);
 		Code code = defaultResult();
-		//Code code = visit(ctx.methodBlock());
-		STCompiledBlock block = new STCompiledBlock(currentClassScope, (STBlock) currentScope);
-		block.blocks = new STCompiledBlock[((STBlock) currentScope).getAllNestedScopedSymbols().size()];
-		code = aggregateResult(code, visitChildren(ctx));
-		for(Scope symbol : ((STBlock) currentScope).getAllNestedScopedSymbols()){
-			STCompiledBlock stCompiledBlock = new STCompiledBlock(currentClassScope,(STBlock)symbol);
-			stCompiledBlock.bytecode = ((STBlock)symbol).compiledBlock.bytecode;
-			block.blocks[blockIndex] = stCompiledBlock;
-			blockIndex++;
-		}
-		ctx.scope.compiledBlock = block;
-//			code = aggregateResult(code, Compiler.push_self());
-//			code = aggregateResult(code, Compiler.method_return());
-		ctx.scope.compiledBlock.bytecode = code.bytes();
+		getCode(ctx, blockIndex, code);
 		popScope();
 		return code;
 	}
@@ -528,11 +454,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		String str = ctx.ID().getText();
 		Symbol sym = currentScope.resolve(str);
 		int index = getLiteralIndex(str);
-		//code = Compiler.push_field(0);
 		code = visit(ctx.unaryExpression());
 		code.join(Compiler.send(0, index));
 		return code;
 	}
-
-
 }
